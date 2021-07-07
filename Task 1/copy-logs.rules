@@ -1,1 +1,1 @@
-ACTION=="add", KERNEL=="sd[a-z]*", ENV{ID_BUS}=="usb", SYMLINK+="added_usb", RUN+="/usr/bin/copy-logs-to-usb.sh"
+ACTION=="add", KERNEL=="sd[a-z]*", RUN+="/usr/bin/copy-logs-to-usb.sh"

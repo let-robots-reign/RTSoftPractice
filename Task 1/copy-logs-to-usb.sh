@@ -1,10 +1,13 @@
-#!/usr/bin/bash
+#!/bin/bash
 
-mkdir /media/usb
-mount /dev/added_usb /media/usb
+mkdir -p /mount/${ID_FS_UUID}
+sudo /usr/bin/mount UUID=${ID_FS_UUID} /mount/${ID_FS_UUID}
 
-cp -i /var/log/boot.log /media/usb/logs/boot.log
-cp -i /var/log/dmesg /media/usb/logs/dmesg.log
+LOGS_DIR=/mount/${ID_FS_UUID}/LINUX_LOGS
+mkdir ${LOGS_DIR}
+cp /var/log/boot.log ${LOGS_DIR}
+cp /var/log/dmesg ${LOGS_DIR}
 
-umount /media/usb
-rm -r /media/usb
+sync /mount/${ID_FS_UUID}
+sudo /usr/bin/umount /mount/${ID_FS_UUID}
+rm -r /mount/${ID_FS_UUID}
