@@ -38,7 +38,7 @@ int init_module(void) {
         return major;
     }
 
-    printk(KERN_INGO "Major is: %d", major);
+    printk(KERN_INFO "Major is: %d", major);
 
     return 0;
 }
