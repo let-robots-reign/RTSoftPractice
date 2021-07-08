@@ -1,7 +1,5 @@
 FROM python:3.9
 
-LABEL mantainer="Josip Janzic <josip@jjanzic.com>"
-
 WORKDIR /opt/build
 
 COPY ./ /opt/build/
