@@ -4,6 +4,8 @@ import numpy as np
 import time
 import os
 import json
+import paho.mqtt.client as mqtt
+
 
 THRESHOLD_CONTOUR_AREA = 1000  # пороговая площадь объекта - не следим за объектами с меньшей площадью
 DEQUE_DEFAULT_MAX_SIZE = 32  # макс. размер дека с точками объектов
@@ -13,6 +15,10 @@ THICKNESS_COEF = 2  # толщина линии траектории
 BLUE_COLOR = (255, 0, 0)
 GREEN_COLOR = (0, 255, 0)
 RED_COLOR = (0, 0, 255)
+
+# MQTT constants
+BROKER = 'localhost'
+PORT = 1883
 
 
 def moving_average(arr, n):
@@ -80,6 +86,11 @@ def process_image(img):
 
 
 def main():
+    client = mqtt.Client('OpenCV detector')
+    if client.connect(BROKER, PORT):
+        print("Error while connecting to MQTT, exiting...")
+        return
+
     filename = os.path.join(os.path.dirname(__file__), os.path.pardir, 'resources/test_video.MOV')
     cap = cv.VideoCapture(filename)
 
@@ -130,7 +141,7 @@ def main():
 
                 # publish data
                 if coords_list: 
-                    print(json.dumps({'coords': coords_list}))
+                    client.publish('opencv/coords', json.dumps({'coords': coords_list}))
 
         if cv.waitKey(1) == ord('q'):
             print('Exiting...')
