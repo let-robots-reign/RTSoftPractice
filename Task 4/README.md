@@ -4,4 +4,9 @@
 
 ## Как запустить
 
+```
+$ sudo docker build -t opencv-detection .
+$ sudo docker run --net=host --env="DISPLAY" --volume="$HOME/.Xauthority:/root/.Xauthority:rw" opencv-detection
+```
+
 ## Пример выполнения

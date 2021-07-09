@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 import time
+import os
 
 THRESHOLD_AREA = 1000
 
@@ -29,7 +30,7 @@ def process_image(img):
     display_contours(img_dilate, res_img)
 
 def main():
-    filename = 'test_video.MOV'
+    filename = os.path.join(os.path.dirname(__file__), os.path.pardir, 'resources/test_video.MOV')
     cap = cv.VideoCapture(filename)
     
     while cap.isOpened():

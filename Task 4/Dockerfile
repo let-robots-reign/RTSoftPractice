@@ -1,8 +1,9 @@
 FROM python:3.9
 
-COPY ./ /opt/build/
+ADD ./src /app/build/src
+ADD ./resources /app/build/resources
 
-WORKDIR /opt/build
+WORKDIR /app/build
 
 ENV OPENCV_VERSION="4.5.1"
 
@@ -24,6 +25,7 @@ RUN apt-get -qq update \
         libopenjp2-7-dev \
         libavformat-dev \
         libpq-dev \
+        libgtk2.0-dev \
     && pip install numpy \
     && wget -q https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip -O opencv.zip \
     && unzip -qq opencv.zip -d /opt \
@@ -56,4 +58,4 @@ RUN apt-get -qq update \
 
 RUN ls -la
 
-CMD python3 objects_detection.py
+CMD python3 ./src/objects_detection.py
