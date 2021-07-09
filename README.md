@@ -8,4 +8,5 @@
 - Task 3 — запуск Docker-контейнера с Firefox :heavy_check_mark:
 - Task 4 — запуск Docker-контейнера с OpenCV-детектором контрастных объектов :heavy_check_mark:
 - Task 5 — фильтрация положения объекта и MQTT
-- Task 6 — MQTT ⟶ Kafka ⟶ InfluxDB ⟶ Graphana
+- Task 6 — запуск теста Apache Kafka в Docker-контейнерах
+- Task 7 — MQTT ⟶ Kafka ⟶ InfluxDB ⟶ Graphana
