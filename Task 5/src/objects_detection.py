@@ -4,18 +4,19 @@ import numpy as np
 import time
 import os
 
+THRESHOLD_CONTOUR_AREA = 1000  # пороговая площадь объекта - не следим за объектами с меньшей площадью
+DEQUE_DEFAULT_MAX_SIZE = 32  # макс. размер дека с точками объектов
+THICKNESS_COEF = 2  # толщина линии траектории
 
-THRESHOLD_CONTOUR_AREA = 1000
-DEQUE_DEFAULT_MAX_SIZE = 32
-THICKNESS_COEF = 2
-# for each object we have its own set of points
-points_list = [deque(maxlen=DEQUE_DEFAULT_MAX_SIZE) for _ in range(2)]
-avg_points_list = [deque(maxlen=DEQUE_DEFAULT_MAX_SIZE) for _ in range(2)]
+# BGR
+BLUE_COLOR = (255, 0, 0)
+GREEN_COLOR = (0, 255, 0)
+RED_COLOR = (0, 0, 255)
 
 
-def moving_average(x, n):
+def moving_average(arr, n):
     # скользящее среднее
-    cumsum = np.cumsum(np.insert(x, 0, 0)) 
+    cumsum = np.cumsum(np.insert(arr, 0, 0)) 
     return (cumsum[n:] - cumsum[:-n]) / n
 
 
@@ -33,25 +34,8 @@ def get_avg_pts(pts, n):
 
     return pts_avg
 
-'''
-def get_avg_pts(pts, n):
-    pts_list = list(pts)
-    pts_len = len(pts_list)
-    list_x, list_y = np.array([point[0] for point in pts_list]), np.array([point[1] for point in pts_list])
 
-    x_avg = moving_average(list_x, min(pts_len, n))
-    y_avg = moving_average(list_y, min(pts_len, n))
-
-    pts_avg = deque(maxlen=DEQUE_DEFAULT_MAX_SIZE)
-
-    for i in range(pts_len):
-        pts_avg.append((int(x_avg[i]), int(y_avg[i])))
-
-    return pts_avg
-'''
-
-
-def draw_tracks(img, contours):
+def draw_tracks(img, contours, points_list, avg_points_list):
     objects_count = len(contours)
 
     for i in range(objects_count):
@@ -65,41 +49,42 @@ def draw_tracks(img, contours):
             if pts[i - 1] is None or pts[i] is None:
                 continue
             if (thickness := int(np.sqrt(64 / i + 1) * THICKNESS_COEF - THICKNESS_COEF)):
-                cv.line(img, pts[i - 1], pts[i], (0, 0, 255), thickness)
+                cv.line(img, pts[i - 1], pts[i], RED_COLOR, thickness)
 
 
-def display_contours(img, img_with_contours):
+def get_contours(img, img_with_contours):
     contours, _ = cv.findContours(img, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
     contours = [_ for _ in contours if cv.contourArea(_) > THRESHOLD_CONTOUR_AREA]
     contours.sort(key=lambda c: cv.contourArea(c))
 
-    cv.drawContours(img_with_contours, contours, -1, (255, 0, 0), 5)
+    cv.drawContours(img_with_contours, contours, -1, BLUE_COLOR, 5)
     for contour in contours:
         x, y, w, h = cv.boundingRect(contour)
-        cv.rectangle(img_with_contours, (x, y), (x + w, y + h), (0, 255, 0), 5)
-    
-    draw_tracks(img_with_contours, contours)
+        cv.rectangle(img_with_contours, (x, y), (x + w, y + h), GREEN_COLOR, 5)
 
-    cv.imshow('Countours detector', img_with_contours)
+    return img_with_contours, contours
 
 
 def process_image(img):
     kernel = np.ones((2, 2), np.uint8)
-    res_img = img.copy()
 
     img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     img_blur = cv.GaussianBlur(img_gray, (7, 7), 0)
     img_median_blur = cv.medianBlur(img_blur, 3)
     _, thresh = cv.threshold(img_median_blur, 180, 255, 0)
     thresh = cv.morphologyEx(thresh, cv.MORPH_GRADIENT, kernel)
-    img_dilate = cv.dilate(thresh,kernel,iterations = 5)
+    img_dilate = cv.dilate(thresh, kernel, iterations = 5)
 
-    display_contours(img_dilate, res_img)
+    return img_dilate
 
 
 def main():
     filename = os.path.join(os.path.dirname(__file__), os.path.pardir, 'resources/test_video.MOV')
     cap = cv.VideoCapture(filename)
+
+    # for each object we have its own set of points and its own trajectory
+    objects_count = 0
+    points_list, avg_points_list = [], []
     
     while cap.isOpened():
         ret, frame = cap.read()
@@ -108,7 +93,20 @@ def main():
             print('Couldn\'t receive a frame') 
             break
 
-        process_image(frame)
+        img = process_image(frame) # preprocessed image
+        img_with_contours, contours = get_contours(img, frame) # drawing contours
+
+        # if we detect more objects, we need to draw more trajectories
+        contours_count = len(contours)
+        if contours_count > objects_count:
+            for _ in range(contours_count - objects_count):
+                points_list.append(deque(maxlen=DEQUE_DEFAULT_MAX_SIZE))
+                avg_points_list.append(deque(maxlen=DEQUE_DEFAULT_MAX_SIZE))
+                objects_count = contours_count
+
+        draw_tracks(img_with_contours, contours, points_list, avg_points_list)
+
+        cv.imshow('Countours detector', img_with_contours)
 
         time.sleep(0.1)
         if cv.waitKey(1) == ord('q'):
