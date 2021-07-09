@@ -10,3 +10,4 @@
 - Task 5 — фильтрация положения объекта и MQTT
 - Task 6 — запуск теста Apache Kafka в Docker-контейнерах
 - Task 7 — MQTT ⟶ Kafka ⟶ InfluxDB ⟶ Graphana
+- Task 8 — REST-интерфейс для запуска и остановки скрипта
