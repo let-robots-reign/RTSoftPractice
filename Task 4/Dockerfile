@@ -1,8 +1,8 @@
 FROM python:3.9
 
-WORKDIR /opt/build
-
 COPY ./ /opt/build/
+
+WORKDIR /opt/build
 
 ENV OPENCV_VERSION="4.5.1"
 
@@ -53,5 +53,7 @@ RUN apt-get -qq update \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get -qq autoremove \
     && apt-get -qq clean
+
+RUN ls -la
 
 CMD python3 objects_detection.py
