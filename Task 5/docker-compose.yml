@@ -1,0 +1,19 @@
+version: "3"
+services:
+    mqtt:
+        image: toke/mosquitto
+        hostname: mosquitto
+        container_name: mqtt
+        expose:
+            - 1883
+        ports:
+            - 1883:1883
+        restart: always
+        privileged: true
+    opencv-detection:
+        build: .
+        environment:
+            - DISPLAY=$DISPLAY
+        volumes:
+            - /tmp/.X11-unix:/tmp/.X11-unix
+        privileged: true
