@@ -5,5 +5,10 @@
 
 ## Как запустить
 
+```
+$ sudo xhost +local:root
+$ docker-compose build
+$ docker-compose up
+```
 
 ## Пример выполнения

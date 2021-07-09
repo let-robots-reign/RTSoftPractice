@@ -17,7 +17,7 @@ GREEN_COLOR = (0, 255, 0)
 RED_COLOR = (0, 0, 255)
 
 # MQTT constants
-BROKER = 'localhost'
+BROKER = 'mosquitto'
 PORT = 1883
 
 

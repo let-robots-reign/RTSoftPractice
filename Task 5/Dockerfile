@@ -26,7 +26,7 @@ RUN apt-get -qq update \
         libavformat-dev \
         libpq-dev \
         libgtk2.0-dev \
-    && pip install numpy \
+    && pip install numpy && pip install paho-mqtt  \
     && wget -q https://github.com/opencv/opencv/archive/${OPENCV_VERSION}.zip -O opencv.zip \
     && unzip -qq opencv.zip -d /opt \
     && rm -rf opencv.zip \
