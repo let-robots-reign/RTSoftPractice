@@ -3,6 +3,7 @@ import cv2 as cv
 import numpy as np
 import time
 import os
+import json
 
 THRESHOLD_CONTOUR_AREA = 1000  # пороговая площадь объекта - не следим за объектами с меньшей площадью
 DEQUE_DEFAULT_MAX_SIZE = 32  # макс. размер дека с точками объектов
@@ -85,6 +86,8 @@ def main():
     # for each object we have its own set of points and its own trajectory
     objects_count = 0
     points_list, avg_points_list = [], []
+
+    frames_count = 0
     
     while cap.isOpened():
         ret, frame = cap.read()
@@ -109,6 +112,26 @@ def main():
         cv.imshow('Countours detector', img_with_contours)
 
         time.sleep(0.1)
+
+        # publishing coordinates every 10 frames
+        frames_count += 1
+        if frames_count % 10 == 0:
+            coords_list = []
+            for i in range(len(points_list)):
+                if len(points_list[i]) > 1 and len(avg_points_list[i]) > 1:
+                    # [i] - index of points' deque; [0] - first point of the deque; [0] or [1] - x or y of the point
+                    coords = {
+                        'x': points_list[i][0][0], 
+                        'y': points_list[i][0][1],
+                        'corrected x': avg_points_list[i][0][0], 
+                        'corrected y': avg_points_list[i][0][1]
+                    }
+                    coords_list.append(coords)
+
+                # publish data
+                if coords_list: 
+                    print(json.dumps({'coords': coords_list}))
+
         if cv.waitKey(1) == ord('q'):
             print('Exiting...')
             break
