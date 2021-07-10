@@ -1,6 +1,6 @@
 from time import sleep
 from json import dumps
-from kafka import KafkaProducer, conn
+from kafka import KafkaProducer
 
 TOPIC_NAME = 'topic_hello'
 SEND_DELAY = 10  # sending a message every 10 seconds
