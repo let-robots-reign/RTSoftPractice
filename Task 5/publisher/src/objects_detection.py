@@ -142,9 +142,9 @@ def main():
                     }
                     coords_list.append(coords)
 
-                # publish data
-                if coords_list:
-                    client.publish(TOPIC_NAME, json.dumps({'coords': coords_list}))
+            # publish data
+            if coords_list:
+                client.publish(TOPIC_NAME, json.dumps({'coords': coords_list}))
 
         if cv.waitKey(1) == ord('q'):
             print('Exiting...')

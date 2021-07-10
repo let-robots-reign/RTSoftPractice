@@ -12,3 +12,11 @@ $ docker-compose up
 ```
 
 ## Пример выполнения
+
+Траектория объектов:
+
+![Траектории](tracks.png)
+
+Логи MQTT broker, subscriber и publisher:
+
+![Логи](mqtt_logs.png)
