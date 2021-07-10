@@ -56,6 +56,4 @@ RUN apt-get -qq update \
     && apt-get -qq autoremove \
     && apt-get -qq clean
 
-RUN ls -la
-
 CMD python3 ./src/objects_detection.py

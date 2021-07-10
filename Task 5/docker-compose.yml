@@ -10,8 +10,13 @@ services:
             - 1883:1883
         restart: always
         privileged: true
-    opencv-detection:
-        build: .
+    opencv-subscriber:
+        build: ./subscriber
+        container_name: opencv-subscriber
+        privileged: true
+    opencv-publisher:
+        build: ./publisher
+        container_name: opencv-publisher
         environment:
             - DISPLAY=$DISPLAY
         volumes:

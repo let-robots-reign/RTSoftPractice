@@ -19,6 +19,7 @@ RED_COLOR = (0, 0, 255)
 # MQTT constants
 BROKER = 'mosquitto'
 PORT = 1883
+TOPIC_NAME = 'opencv/coords'
 
 
 def moving_average(arr, n):
@@ -86,10 +87,12 @@ def process_image(img):
 
 
 def main():
-    client = mqtt.Client('OpenCV detector')
-    if client.connect(BROKER, PORT):
+    client = mqtt.Client('OpenCV detector publisher')
+    status = client.connect(BROKER, PORT)
+    if status:
         print("Error while connecting to MQTT, exiting...")
         return
+    print(f'Publisher connected with status code {status}', flush=True)
 
     filename = os.path.join(os.path.dirname(__file__), os.path.pardir, 'resources/test_video.MOV')
     cap = cv.VideoCapture(filename)
@@ -140,8 +143,8 @@ def main():
                     coords_list.append(coords)
 
                 # publish data
-                if coords_list: 
-                    client.publish('opencv/coords', json.dumps({'coords': coords_list}))
+                if coords_list:
+                    client.publish(TOPIC_NAME, json.dumps({'coords': coords_list}))
 
         if cv.waitKey(1) == ord('q'):
             print('Exiting...')
