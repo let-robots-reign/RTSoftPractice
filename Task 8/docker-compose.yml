@@ -79,6 +79,14 @@ services:
         container_name: kafka-consumer
         depends_on: 
             - mqtt-subscriber
+    
+    flask:
+        build: ./server
+        container_name: flask
+        ports:
+            - "5000:5000"
+        depends_on: 
+            - kafka-consumer
 
     detector:
         build: ./detector
@@ -88,7 +96,7 @@ services:
         volumes:
             - /tmp/.X11-unix:/tmp/.X11-unix
         depends_on:
-            - kafka-consumer
+            - flask
 
 volumes:
     grafana-volume:
