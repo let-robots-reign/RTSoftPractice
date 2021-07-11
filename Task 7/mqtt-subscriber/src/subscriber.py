@@ -17,7 +17,6 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     message = msg.payload.decode()
-    #print(message, flush=True)
     producer = userdata['kafka_producer']
     producer.send(KAFKA_TOPIC_NAME, value=message)
 

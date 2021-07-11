@@ -135,10 +135,10 @@ def main():
                 if len(points_list[i]) > 1 and len(avg_points_list[i]) > 1:
                     # [i] - index of points' deque; [0] - first point of the deque; [0] or [1] - x or y of the point
                     coords = {
-                        'x': points_list[i][0][0], 
-                        'y': points_list[i][0][1],
-                        'corrected x': avg_points_list[i][0][0], 
-                        'corrected y': avg_points_list[i][0][1]
+                        f'x_{i}': points_list[i][0][0], 
+                        f'y_{i}': points_list[i][0][1],
+                        f'corrected x_{i}': avg_points_list[i][0][0], 
+                        f'corrected y_{i}': avg_points_list[i][0][1]
                     }
                     coords_list.append(coords)
 
@@ -152,6 +152,7 @@ def main():
     
     cap.release()
     cv.destroyAllWindows()
+    client.loop_forever()
 
 
 if __name__ == '__main__':

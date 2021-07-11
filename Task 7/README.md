@@ -4,9 +4,44 @@
 
 ## Принцип взаимодействия
 
-detector ⟶ mqtt-subscriber ⟶ kafka-consumer ⟶ influxdb ⟶ graphana
-detector публикует координаты объектов, mqtt-subscriber кладет данные в Kafka, kafka-consumer кладет данные в influxdb
+detector ⟶ mqtt-subscriber ⟶ kafka-consumer ⟶ influxdb ⟶ grafana
+
+detector публикует координаты объектов, mqtt-subscriber получает координаты и кладет данные в Kafka, kafka-consumer кладет данные в influxdb, grafana отображает полученные данные
 
 ## Как запустить
 
-## Пример выполнения
+```
+$ sudo xhost +local:root
+$ docker-compose build
+$ docker-compose up
+```
+1. После запуска перейти по адресу localhost:3000, ввести в Grafana пару логин-пароль admin admin, назначить новый логин и пароль
+2. Перейти в меню Configuration - Data sources и добавить InfluxDB согласно картинке:
+
+![InfluxDB](img/influx.png)
+
+3. Создать Dashboard и нужное количество панелей. На панели настроить отображение нужных данных с помощью запросов. Пример настройки для отображения координаты x_0:
+
+![x_0 graph](img/graph.png)
+
+## Запущенные контейнеры
+
+![Контейнеры](img/containers.png)
+
+## Графики
+
+x и скорректированная координата x для первого объекта:
+
+![x_0](img/x_0.png)
+
+y и скорректированная координата y для первого объекта:
+
+![y_0](img/y_0.png)
+
+x и скорректированная координата x для второго объекта:
+
+![x_1](img/x_1.png)
+
+y и скорректированная координата y для второго объекта:
+
+![y_1](img/y_1.png)
