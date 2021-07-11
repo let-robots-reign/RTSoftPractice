@@ -9,5 +9,5 @@
 - Task 4 — запуск Docker-контейнера с OpenCV-детектором контрастных объектов :heavy_check_mark:
 - Task 5 — фильтрация положения объекта и MQTT :heavy_check_mark:
 - Task 6 — запуск теста Apache Kafka в Docker-контейнерах :heavy_check_mark:
-- Task 7 — MQTT ⟶ Kafka ⟶ InfluxDB ⟶ Grafana
+- Task 7 — MQTT ⟶ Kafka ⟶ InfluxDB ⟶ Grafana :heavy_check_mark:
 - Task 8 — REST-интерфейс для запуска и остановки скрипта
