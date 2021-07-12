@@ -21,6 +21,20 @@ BROKER = 'mosquitto'
 PORT = 1883
 MQTT_TOPIC_NAME = 'opencv/coords'
 
+mode = {'mode': 'play'}
+
+def on_connect(client, userdata, flags, rc):
+    print(f'Subscribing to flask/change_mode with status code {str(rc)}', flush=True)
+    client.subscribe('flask/change_mode')
+
+
+def on_message(client, userdata, msg):
+    message = msg.payload.decode()
+    if message == 'play':
+        mode['mode'] = 'play'
+    elif message == 'pause':
+        mode['mode'] = 'pause'
+
 
 def moving_average(arr, n):
     # скользящее среднее
@@ -88,11 +102,15 @@ def process_image(img):
 
 def main():
     client = mqtt.Client('OpenCV detector publisher')
+    client.on_connect = on_connect
+    client.on_message = on_message
     status = client.connect(BROKER, PORT)
     if status:
         print("Error while connecting to MQTT, exiting...")
         return
     print(f'Publisher connected with status code {status}', flush=True)
+
+    time.sleep(3)
 
     filename = os.path.join(os.path.dirname(__file__), os.path.pardir, 'resources/test_video.MOV')
     cap = cv.VideoCapture(filename)
@@ -104,6 +122,10 @@ def main():
     frames_count = 0
     
     while cap.isOpened():
+
+        if mode['mode'] == 'pause':
+            continue
+
         ret, frame = cap.read()
 
         if not ret:
