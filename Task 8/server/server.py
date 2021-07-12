@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_caching import Cache
-import paho.mqtt.client as mqtt
 
 BROKER = 'mosquitto'
 PORT = 1883
@@ -16,8 +15,6 @@ app.config.from_mapping(config)
 cache = Cache(app)
 cache.set('current_mode', 'play')
 
-client = mqtt.Client('Server publisher')
-
 # curl http://localhost:5000/mode
 @app.route('/mode', methods=['GET'])
 def get_mode():
@@ -28,10 +25,7 @@ def get_mode():
 @app.route('/play', methods=['POST'])
 def set_play_mode():
     if cache.get('current_mode') == 'pause':
-        client.connect(BROKER, PORT)
         cache.set('current_mode', 'play')
-        client.publish(topic='flask/change_mode', payload='play', retain=True)
-        client.disconnect()
         return 'Unpausing the script!'
 
     return 'Already in play mode, skipping'
@@ -40,10 +34,7 @@ def set_play_mode():
 @app.route('/pause', methods=['POST'])
 def set_pause_mode():
     if cache.get('current_mode') == 'play':
-        client.connect(BROKER, PORT)
         cache.set('current_mode', 'pause')
-        client.publish(topic='flask/change_mode', payload='pause', retain=True)
-        client.disconnect()
         return 'Pausing the script!'
 
     return 'Already in pause mode, skipping'   
